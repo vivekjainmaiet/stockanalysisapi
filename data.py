@@ -2,11 +2,9 @@ import pandas as pd
 import yfinance as yf
 import numpy as np
 import pandas_ta as pta
-from stockanalysis.utils import *
+from utils import *
 from pandas_datareader import data as pdr
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.compose import ColumnTransformer
+
 yf.pdr_override()
 
 def get_technical(symbol="INFY.NS",start="2017-01-01", end="2021-04-30"):
@@ -45,41 +43,3 @@ def clean_data(df, test=False):
     df = df.dropna(how='any')
     df = df.reset_index()
     return df
-
-
-def split_predict(scaled_data, X):
-    # Create the training data set
-    # Create the scaled training data set
-    train_data = scaled_data
-    # Split the data into x_train and y_train data sets
-    x_train = []
-    y_train = []
-
-    for i in range(60, len(train_data)):
-        x_train.append(train_data[i - 60:i, 0])
-        y_train.append(X[i, 0])
-        if i <= 61:
-            print(x_train)
-            print(y_train)
-            print()
-
-    # Convert the x_train and y_train to numpy arrays
-    x_train, y_train = np.array(x_train), np.array(y_train)
-
-    # Reshape the data
-    x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
-    # x_train.shape
-
-    return x_train, y_train
-
-
-def set_pipeline(cleaned_data):
-    '''returns a pipelined model'''
-    data_pipe = Pipeline([('stdscaler', StandardScaler())])
-    preproc_pipe = ColumnTransformer(
-        [('data', data_pipe, cleaned_data.columns)], remainder="drop")
-
-    pipe = Pipeline([('preproc', preproc_pipe)])
-
-    scaled_data = pipe.fit_transform(cleaned_data)
-    return scaled_data, pipe
