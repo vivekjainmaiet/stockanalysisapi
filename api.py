@@ -103,8 +103,7 @@ def prediction(ticker='INFY.NS', start="2017-01-01", end="2022-02-24"):
     scaled_data = scaled_data[-61:, :]
     X, y = split_predict(scaled_data, X)
     #Load model trainned model in previous stage to predict future price
-    model = joblib.load(
-        '/Users/vivek/code/vivekjainmaiet/stockanalysis/api/model.joblib')
+    model = joblib.load('model.joblib')
     results = model.predict(X)
     pred = float(results[0])
     return {"close": pred}
