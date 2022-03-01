@@ -52,10 +52,7 @@ def clean_data(df, test=False):
     return df
 
 
-def download_model(
-        storage_location='models/stockanalysis/Pipeline/INFY.NS.joblib',
-        bucket=BUCKET_NAME,
-        rm=True):
+def download_model(storage_location='models/stockanalysis/Pipeline/INFY.NS.joblib',bucket=BUCKET_NAME,rm=False):
     client = storage.Client().bucket(bucket)
     blob = client.blob(storage_location)
     blob.download_to_filename('model.joblib')
