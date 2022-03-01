@@ -10,3 +10,4 @@ uvicorn==0.17.4
 numpy==1.22.2
 scikit-learn==1.0.2
 google-cloud-storage==2.1.0
+tensorflow==2.8.0
