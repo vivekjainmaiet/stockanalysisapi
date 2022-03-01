@@ -4,13 +4,19 @@ import numpy as np
 import pandas_ta as pta
 from utils import *
 from pandas_datareader import data as pdr
+import os
+import joblib
+from google.cloud import storage
+
+PATH_TO_LOCAL_MODEL = 'model.joblib'
+BUCKET_NAME = "one-stop-stock-analysis"
 
 yf.pdr_override()
 
 def get_technical(symbol="INFY.NS",start="2017-01-01", end="2021-04-30"):
     '''returns a DataFrame with stock technical data'''
     df = pdr.get_data_yahoo(symbol, start=start, end=end)
-    df.drop(columns=['Adj Close'],inplace=True)
+    #df.drop(columns=['Adj Close'],inplace=True)
 
     df['ema12'] = get_ema(df, column='Close', period=12)
     df['ema21'] = get_ema(df, column='Close', period=21)
@@ -28,6 +34,7 @@ def get_technical(symbol="INFY.NS",start="2017-01-01", end="2021-04-30"):
     df['hma200'] = get_hma(df, column='Close', period=200)
     df['rsi'] = get_rsi(df, period=14)
     df['atr'] = get_atr(df, period=14)
+    #breakpoint()
     df['bb_upper'] = get_bband(df, period=20, std=2)['BBU_20_2.0']
     df['bb_lower'] = get_bband(df, period=20, std=2)['BBL_20_2.0']
     df['macd_signal'] = get_macd(df, fast=12, slow=26,
@@ -43,3 +50,17 @@ def clean_data(df, test=False):
     df = df.dropna(how='any')
     df = df.reset_index()
     return df
+
+
+def download_model(
+        storage_location='models/stockanalysis/Pipeline/INFY.NS.joblib',
+        bucket=BUCKET_NAME,
+        rm=True):
+    client = storage.Client().bucket(bucket)
+    blob = client.blob(storage_location)
+    blob.download_to_filename('model.joblib')
+    print("=> pipeline downloaded from storage")
+    model = joblib.load('model.joblib')
+    if rm:
+        os.remove('model.joblib')
+    return model
