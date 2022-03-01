@@ -4,7 +4,6 @@ COPY api.py api.py
 COPY data.py data.py
 COPY param.py param.py
 COPY utils.py utils.py
-COPY model.joblib model.joblib
 COPY requirements.txt requirements.txt
 
 RUN pip install -U pip
