@@ -9,4 +9,4 @@ mysql-connector-python-rf==2.2.2
 uvicorn==0.17.4
 numpy==1.22.2
 scikit-learn==1.0.2
-tensorflow==2.8.0
+google-cloud-storage==2.1.0

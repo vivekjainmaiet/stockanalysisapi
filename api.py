@@ -28,8 +28,7 @@ def index():
         technical="/technical?ticker=TCS",
         news="/newslist?ticker=TCS",
         recommendation="/recommendation?ticker=TCS",
-        prediction=
-        "prediction?ticker='INFY.NS'&start='2017-01-01'&end='2022-02-24")
+        prediction="/prediction?ticker=INFY.NS&start=2017-01-01&end=2022-02-24")
 
 
 @app.get("/stocklist")
