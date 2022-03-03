@@ -1,6 +1,6 @@
 config = {
     'user': 'users',
     'password': '#Stocks@007#',
-    'host': '%',
-    'database': 'stockdb\stocksdb'
+    'host': '34.79.163.70',
+    'database': 'stocksdb'
 }
