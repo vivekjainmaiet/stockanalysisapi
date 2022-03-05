@@ -27,8 +27,10 @@ def index():
         stock="/stock?ticker=TCS",
         technical="/technical?ticker=TCS",
         news="/newslist?ticker=TCS",
+        twitter="/twitter?ticker=TCS",
         recommendation="/recommendation?ticker=TCS",
-        prediction="/prediction?ticker=INFY.NS&start=2017-01-01&end=2022-02-24")
+        prediction="/prediction?ticker=INFY.NS&start=2017-01-01&end=2022-02-24"
+    )
 
 
 @app.get("/stocklist")
@@ -91,6 +93,20 @@ def recommendation(ticker):  # 1
     mycursor.execute(query)
     recommendation_list = mycursor.fetchall()
     return recommendation_list
+
+
+@app.get("/twitter")
+def twitter(ticker):  # 1
+    conn = connection.connect(**config)
+    mycursor = conn.cursor(dictionary=True)
+    query = f"SELECT * FROM stocksdb.StocksList where StockCode ='{ticker}';"
+    mycursor.execute(query)
+    stock = mycursor.fetchone()
+    stock_id = stock['ID']
+    query = f"SELECT * FROM stocksdb.twitter_sentiment where stock_id = {stock_id};"
+    mycursor.execute(query)
+    twitter_list = mycursor.fetchall()
+    return twitter_list
 
 
 @app.get("/prediction")
