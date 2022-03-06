@@ -9,6 +9,9 @@ import mysql.connector as connection
 from param import config
 from data import *
 
+from tradingview_ta import TA_Handler, Interval, Exchange
+import tradingview_ta
+
 app = FastAPI()
 
 app.add_middleware(
@@ -30,7 +33,8 @@ def index():
         news="/newslist?ticker=TCS",
         twitter="/twitter?ticker=TCS",
         recommendation="/recommendation?ticker=TCS",
-        prediction="/prediction?ticker=INFY.NS&start=2017-01-01&end=2022-02-24"
+        prediction="/prediction?ticker=INFY.NS&start=2017-01-01&end=2022-02-24",
+        summary="/summary?symbol=AAPL&exchange=NASDAQ&country=america&interval=1d"
     )
 
 
@@ -144,3 +148,14 @@ def prediction(ticker, start, end):
     results = model.predict(X)
     pred = float(results[0])
     return {"close": pred}
+
+@app.get("/summary")
+def summary(symbol,exchange,country,interval):
+    data_summary={"summary":[],"oscillators":[],"moving_averages":[],"indicators":[]}
+    handler = TA_Handler(symbol=symbol,exchange=exchange,screener=country,interval=interval)
+    analysis = handler.get_analysis()
+    data_summary["summary"].append(analysis.summary)
+    data_summary["oscillators"].append(analysis.oscillators)
+    data_summary["moving_averages"].append(analysis.moving_averages)
+    data_summary["indicators"].append(analysis.indicators)
+    return data_summary
