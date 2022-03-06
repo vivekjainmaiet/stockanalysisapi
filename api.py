@@ -67,6 +67,20 @@ def technical(ticker):  # 1
     return technical_data
 
 
+@app.get("/fundamental")
+def fundamental(ticker):  # 1
+    conn = connection.connect(**config)
+    mycursor = conn.cursor(dictionary=True)
+    query = f"SELECT * FROM stocksdb.StocksList where StockCode ='{ticker}';"
+    mycursor.execute(query)
+    stock = mycursor.fetchone()
+    stock_id = stock['ID']
+    query = f"SELECT * FROM stocksdb.raw_fundamental where Stock_id = {stock_id}"
+    mycursor.execute(query)
+    fundamental_data = mycursor.fetchall()
+    return fundamental_data
+
+
 @app.get("/newslist")
 def newslist(ticker):
     conn = connection.connect(**config)
@@ -75,7 +89,7 @@ def newslist(ticker):
     mycursor.execute(query)
     stock = mycursor.fetchone()
     stock_id = stock['ID']
-    query = f"SELECT * FROM stocksdb.raw_news where stock_id = {stock_id};"
+    query = f"SELECT * FROM stocksdb.raw_news where stock_id = {stock_id} ORDER BY ID DESC LIMIT 10;"
     mycursor.execute(query)
     newslist = mycursor.fetchall()
     return newslist
@@ -89,7 +103,7 @@ def recommendation(ticker):  # 1
     mycursor.execute(query)
     stock = mycursor.fetchone()
     stock_id = stock['ID']
-    query = f"SELECT * FROM stocksdb.raw_recommendation where stock_id = {stock_id};"
+    query = f"SELECT * FROM stocksdb.raw_recommendation where stock_id = {stock_id} ORDER BY ID DESC LIMIT 10;"
     mycursor.execute(query)
     recommendation_list = mycursor.fetchall()
     return recommendation_list
@@ -103,7 +117,7 @@ def twitter(ticker):  # 1
     mycursor.execute(query)
     stock = mycursor.fetchone()
     stock_id = stock['ID']
-    query = f"SELECT * FROM stocksdb.twitter_sentiment where stock_id = {stock_id};"
+    query = f"SELECT * FROM stocksdb.twitter_sentiment where stock_id = {stock_id} ORDER BY ID DESC LIMIT 1;"
     mycursor.execute(query)
     twitter_list = mycursor.fetchall()
     return twitter_list
