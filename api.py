@@ -26,6 +26,7 @@ def index():
         stocklist="/stocklist",
         stock="/stock?ticker=TCS",
         technical="/technical?ticker=TCS",
+        fundamental="/fundamental?ticker=TCS",
         news="/newslist?ticker=TCS",
         twitter="/twitter?ticker=TCS",
         recommendation="/recommendation?ticker=TCS",
