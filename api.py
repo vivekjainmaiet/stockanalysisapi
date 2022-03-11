@@ -136,17 +136,42 @@ def prediction(ticker):
     mycursor.execute(query)
     stock = mycursor.fetchone()
     stock_id = stock['ID']
-    query = f"SELECT prediction_price FROM stocksdb.Stock_Prediction where stock_id = {stock_id} ORDER BY ID DESC LIMIT 1;"
+    query = f"SELECT prediction_price,prediction_perchange,prediction_cum_perchange FROM stocksdb.Stock_Prediction where stock_id = {stock_id} ORDER BY ID DESC LIMIT 1;"
     mycursor.execute(query)
-    prediction_list = mycursor.fetchall()
-    prediction_list = prediction_list[0]['prediction_price'].replace(
-        "\n ", "").replace("[[", "").replace("]]", "").split(" ")
+    prediction_data = mycursor.fetchall()
+    prediction_list = prediction_data[0]['prediction_price'].replace("\n ", "").replace("[[", "").replace("]]", "").split(" ")
+
+
+
+    prediction_perchange_list = prediction_data[0]['prediction_perchange'].replace("\n ","").replace("[[","").replace("]]","").split(" ")
+
+    prediction_cum_perchange_list = prediction_data[0]['prediction_cum_perchange'].replace("\n ","").replace("[[", "").replace("]]", "").split(" ")
 
     prediction_dict = dict.fromkeys(range(len(prediction_list)))
     for i in range(len(prediction_list)):
         prediction_dict[i] = prediction_list[i]
 
-    return prediction_dict
+
+
+    prediction_perchange_dict = dict.fromkeys(range(len(prediction_perchange_list)))
+    for i in range(len(prediction_perchange_list)):
+        prediction_perchange_dict[i] = prediction_perchange_list[i]
+
+    prediction_cum_perchange_dict = dict.fromkeys(range(len(prediction_cum_perchange_list)))
+    for i in range(len(prediction_cum_perchange_list)):
+        prediction_cum_perchange_dict[i] = prediction_cum_perchange_list[i]
+
+    nnnn = {
+        "prediction": [prediction_dict],
+        "prediction_perchange": [prediction_perchange_dict],
+        "prediction_cum_perchange": [prediction_cum_perchange_dict]
+    }
+
+    return {
+        "prediction": [prediction_dict],
+        "prediction_perchange": [prediction_perchange_dict],
+        "prediction_cum_perchange": [prediction_cum_perchange_dict]
+    }
 
 @app.get("/summary")
 def summary(symbol,exchange,country,interval):
@@ -157,4 +182,6 @@ def summary(symbol,exchange,country,interval):
     data_summary["oscillators"].append(analysis.oscillators)
     data_summary["moving_averages"].append(analysis.moving_averages)
     data_summary["indicators"].append(analysis.indicators)
+    #data_summary['moving_averages'][0]['COMPUTE'][new_key] = data_summary['moving_averages'][0]['COMPUTE']['EMA10']
+    #del data_summary['moving_averages'][0]['COMPUTE']['EMA10']
     return data_summary
