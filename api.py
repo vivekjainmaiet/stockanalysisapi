@@ -34,6 +34,7 @@ def index():
         twitter="/twitter?ticker=TCS",
         recommendation="/recommendation?ticker=TCS",
         prediction="/prediction?ticker=TCS",
+        action="/action?ticker=TCS",
         summary="/summary?symbol=AAPL&exchange=NASDAQ&country=america&interval=1d"
     )
 
@@ -185,3 +186,17 @@ def summary(symbol,exchange,country,interval):
     #data_summary['moving_averages'][0]['COMPUTE'][new_key] = data_summary['moving_averages'][0]['COMPUTE']['EMA10']
     #del data_summary['moving_averages'][0]['COMPUTE']['EMA10']
     return data_summary
+
+
+@app.get("/action")
+def action(ticker):  # 1
+    conn = connection.connect(**config)
+    mycursor = conn.cursor(dictionary=True)
+    query = f"SELECT * FROM stocksdb.StocksList where StockCode ='{ticker}';"
+    mycursor.execute(query)
+    stock = mycursor.fetchone()
+    stock_id = stock['ID']
+    query = f"SELECT action FROM stocksdb.Stock_Prediction where stock_id = {stock_id} ORDER BY ID DESC LIMIT 1;"
+    mycursor.execute(query)
+    prediction_action = mycursor.fetchone()
+    return prediction_action
